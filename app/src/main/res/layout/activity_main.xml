@@ -5,6 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/emptyList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No photos was added yet"
+        android:gravity="center"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/photoList"
         android:layout_width="match_parent"

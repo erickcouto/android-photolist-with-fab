@@ -1,8 +1,9 @@
 package br.com.erickalves.photolist.Model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PhotoItem {
+public class PhotoItem implements Serializable {
 
     private String imageSource;
     private String name;

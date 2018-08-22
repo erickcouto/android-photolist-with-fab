@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,9 +19,11 @@ import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -35,8 +39,8 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
     private static int CAMERA = 0;
     private static int GALLERY = 1;
     //PicTake mPicTake;
-    ImageView imageView;
     private RecyclerView photoList;
+    private TextView emptyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
         
 
         photoList = findViewById(R.id.photoList);
+        emptyList = findViewById(R.id.emptyList);
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         photoList.setLayoutManager(mLayoutManager);
@@ -61,6 +66,10 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
 //        photoList.setAdapter(mAdapter);
 
         List<PhotoItem> photoListItems = Cache.getDataFromSharedPreferences(Main.this);
+
+        if(photoListItems!=null && photoListItems.size()>0){
+            emptyList.setVisibility(View.GONE);
+        }
         PhotoListAdapter mAdapter = new PhotoListAdapter(photoListItems,this);
 
         photoList.setAdapter(mAdapter);
@@ -119,6 +128,7 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
         PhotoListAdapter mAdapter = new PhotoListAdapter(photoListItems,Main.this);
 
         photoList.setAdapter(mAdapter);
+        emptyList.setVisibility(View.GONE);
 
     }
     private void openChooserImage(int type) {
@@ -187,7 +197,14 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
     }
 
     @Override
-    public void onClick(PhotoItem item) {
-        Toast.makeText(this, item.getName(), Toast.LENGTH_SHORT).show();
+    public void onClick(PhotoItem item, ImageView iv) {
+        Intent intent = new Intent(Main.this, PhotoDetail.class);
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(Main.this, iv,  ViewCompat.getTransitionName(iv));
+        intent.putExtra("photo", (Serializable) item);
+
+        startActivity(intent, options.toBundle());
+
+
     }
 }
