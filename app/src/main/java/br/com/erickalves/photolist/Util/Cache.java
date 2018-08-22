@@ -33,14 +33,14 @@ public class Cache {
 
     public static List<PhotoItem> getDataFromSharedPreferences(Context context){
         Gson gson = new Gson();
-        List<PhotoItem> productFromShared = new ArrayList<>();
+        List<PhotoItem> photosFromShared;
         SharedPreferences sharedPref = context.getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
         String jsonPreferences = sharedPref.getString(PHOTOS_TAG, "");
 
         Type type = new TypeToken<List<PhotoItem>>() {}.getType();
-        productFromShared = gson.fromJson(jsonPreferences, type);
+        photosFromShared = gson.fromJson(jsonPreferences, type);
 
-        return productFromShared;
+        return photosFromShared;
     }
 
     public static void addPhotoToList(Context context, PhotoItem photoList){
@@ -63,7 +63,6 @@ public class Cache {
             e.printStackTrace();
         }
 
-        //SAVE NEW ARRAY
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(PHOTOS_TAG, jsonArrayPhotoList.toString());
         editor.commit();

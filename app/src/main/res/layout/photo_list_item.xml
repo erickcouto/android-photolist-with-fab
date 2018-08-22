@@ -39,7 +39,7 @@
                 android:id="@+id/photoName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nome da imagem"
+                android:text="@string/noname"
                 android:textSize="22sp" />
 
             <TextView
@@ -47,7 +47,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/photoName"
-                android:text="22/07/1989"
                 android:textSize="14sp" />
 
         </RelativeLayout>

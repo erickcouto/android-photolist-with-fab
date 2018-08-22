@@ -10,7 +10,7 @@ import br.com.erickalves.photolist.Model.PhotoItem;
 import br.com.erickalves.photolist.R;
 
 public class PhotoDetail extends AppCompatActivity {
-
+    public static String PHOTO_EXTRA= "photo";
     ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +18,7 @@ public class PhotoDetail extends AppCompatActivity {
         setContentView(R.layout.photo_detail);
 
 
-        PhotoItem photo = (PhotoItem) getIntent().getSerializableExtra("photo");
+        PhotoItem photo = (PhotoItem) getIntent().getSerializableExtra(PHOTO_EXTRA);
         setTitle(photo.getName());
         imageView = findViewById(R.id.imageView);
         Bitmap bitmap = BitmapFactory.decodeFile(photo.getImageSource());

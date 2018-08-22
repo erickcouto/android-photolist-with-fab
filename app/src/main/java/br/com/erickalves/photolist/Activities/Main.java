@@ -195,7 +195,7 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
         Intent intent = new Intent(Main.this, PhotoDetail.class);
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(Main.this, iv,  ViewCompat.getTransitionName(iv));
-        intent.putExtra("photo", (Serializable) item);
+        intent.putExtra(PhotoDetail.PHOTO_EXTRA, item);
 
         startActivity(intent, options.toBundle());
 
