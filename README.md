@@ -4,6 +4,7 @@ A example creating a basic Android app with a Photo list, Fab Button with subite
 * Java;
 * Fab menu with subitens;
 * PhotoView to visualize image with Zoom;
+* Activity Transition with animation;
 * RecyclerView;
 * GSON;
 
