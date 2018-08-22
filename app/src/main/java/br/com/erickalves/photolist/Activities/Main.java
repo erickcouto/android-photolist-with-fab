@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -22,8 +23,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionButton;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionHelper;
+import com.wangjie.rapidfloatingactionbutton.RapidFloatingActionLayout;
+import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RFACLabelItem;
+import com.wangjie.rapidfloatingactionbutton.contentimpl.labellist.RapidFloatingActionContentLabelList;
+
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,7 +42,7 @@ import br.com.erickalves.photolist.Util.Cache;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
-public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemClickListener {
+public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemClickListener, RapidFloatingActionContentLabelList.OnRapidFloatingActionContentLabelListListener {
 
     private static int CAMERA = 0;
     private static int GALLERY = 1;
@@ -42,28 +50,23 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
     private RecyclerView photoList;
     private TextView emptyList;
 
+    private RapidFloatingActionLayout rfaLayout;
+    private RapidFloatingActionButton rfaBtn;
+    RapidFloatingActionHelper rfabHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //imageView = findViewById(R.id.imageView);
-
-
-        
+        emptyList = findViewById(R.id.emptyList);
+        rfaLayout = findViewById(R.id.activity_main_rfal);
+        rfaBtn = findViewById(R.id.activity_main_rfab);
 
         photoList = findViewById(R.id.photoList);
-        emptyList = findViewById(R.id.emptyList);
-
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         photoList.setLayoutManager(mLayoutManager);
-
-        photoList.addItemDecoration(
-                new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        // specify an adapter (see also next example)
-//        PhotoListAdapter mAdapter = new PhotoListAdapter(myDataset);
-//        photoList.setAdapter(mAdapter);
+        photoList.addItemDecoration(  new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         List<PhotoItem> photoListItems = Cache.getDataFromSharedPreferences(Main.this);
 
@@ -74,29 +77,22 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
 
         photoList.setAdapter(mAdapter);
 
-        
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                openChooserImage(CAMERA);
+        configFab();
 
-            }
-        });
 
     }
 
     private void openTitleDialog(final File image){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Image title");
+        builder.setTitle(R.string.image_title);
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT );
         builder.setView(input);
 
-        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.submit, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                String  title = input.getText().toString();
@@ -104,7 +100,7 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
 
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -165,7 +161,7 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
                     EasyImage.openCamera(Main.this, 1);
 
                 } else {
-                    Toast.makeText(this, "We need your permission to access your pictures", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.permission_message, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -181,8 +177,6 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
         EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
-                //Some error handling
-                Toast.makeText(Main.this, "Something went wrong, try again.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -206,5 +200,62 @@ public class Main extends AppCompatActivity implements PhotoListAdapter.OnItemCl
         startActivity(intent, options.toBundle());
 
 
+    }
+
+    private void configFab() {
+
+        RapidFloatingActionContentLabelList rfaContent = new RapidFloatingActionContentLabelList(this);
+        rfaContent.setOnRapidFloatingActionContentLabelListListener(this);
+        List<RFACLabelItem> items = new ArrayList<>();
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("From Camera")
+                .setResId(R.drawable.ic_photo_camera)
+                .setIconNormalColor(Color.parseColor("#668cff"))
+                .setIconPressedColor(Color.parseColor("#3F51B5"))
+                .setWrapper(0)
+        );
+        items.add(new RFACLabelItem<Integer>()
+                .setLabel("From Gallery")
+                .setResId(R.drawable.ic_picture)
+                .setIconNormalColor(Color.parseColor("#668cff"))
+                .setIconPressedColor(Color.parseColor("#3F51B5"))
+                .setLabelSizeSp(14)
+                .setWrapper(0)
+        );
+
+        rfaContent
+                .setItems(items)
+                .setIconShadowColor(0xff888888);
+
+        rfabHelper = new RapidFloatingActionHelper(
+                this,
+                rfaLayout,
+                rfaBtn,
+                rfaContent
+        ).build();
+
+    }
+
+    @Override
+    public void onRFACItemLabelClick(int position, RFACLabelItem item) {
+        rfabHelper.toggleContent();
+        fabClick(position);
+    }
+
+    @Override
+    public void onRFACItemIconClick(int position, RFACLabelItem item) {
+        rfabHelper.toggleContent();
+        fabClick(position);
+    }
+
+    public void fabClick(int position){
+        switch (position){
+            case 0:
+                openChooserImage(CAMERA);
+                break;
+            case 1:
+                openChooserImage(GALLERY);
+                break;
+        }
     }
 }

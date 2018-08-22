@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PhotoList</string>
+    <string name="permission_message">We need your permission to access your pictures</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
+    <string name="image_title">Image title</string>
 </resources>
